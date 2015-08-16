@@ -1,7 +1,8 @@
 # GudianceSDKROS
 The official ROS package of Guidance SDK for 32/64 bit Ubuntu and XU3.
 
-We write the CMakeLists.txt file so that it automatically detects your operating system and choose the appropriate library file.
+- We write the CMakeLists.txt file so that it automatically detects your operating system and choose the appropriate library file.
+- We suppose the users are using USB for Guidance SDK on ROS. To use UART for Guidance SDK, plese reference [uart_example](https://github.com/dji-sdk/GuidanceSDK/tree/master/examples/uart_example).
 
 # How to use
 1. Setup USB devide rules so that no root privilege is required when using Guidance SDK via USB.
