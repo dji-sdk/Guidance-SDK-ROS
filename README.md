@@ -13,6 +13,7 @@ The official ROS package of Guidance SDK for 32/64 bit Ubuntu and XU3.
 		cd ~/catkin_ws
 		catkin_make
 		rosrun GuidanceRos GuidanceNode
+		rosrun GuidanceRos GuidanceNodeTest
 
 # Documentation
 To reduce the size of this package, we omit all documents. 
