@@ -7,7 +7,7 @@ The official ROS package of Guidance SDK for 32/64 bit Ubuntu and XU3.
 # How to use
 1. Setup USB devide rules so that no root privilege is required when using Guidance SDK via USB.
 		
-		sudo sh -c 'echo "SUBSYSTEM==\"usb\", ATTR{idVendor}==\"18d1\", ATTR{idProduct}==\"d009\", MODE=\"0666\"" > /etc/udev/rules.d/51-guidance.rules'
+		sudo sh -c 'echo "SUBSYSTEM==\"usb\", ATTR{idVendor}==\"fff0\", ATTR{idProduct}==\"d009\", MODE=\"0666\"" > /etc/udev/rules.d/51-guidance.rules'
 2. Clone the repo to the catkin workspace source directory `catkin_ws/src` and then 
 	
 		cd ~/catkin_ws
