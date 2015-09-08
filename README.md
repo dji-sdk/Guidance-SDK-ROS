@@ -1,4 +1,4 @@
-# GudianceSDKROS
+# Gudiance-SDK-ROS
 The official ROS package of Guidance SDK for 32/64 bit Ubuntu and XU3.
 
 - We write the CMakeLists.txt file so that it automatically detects your operating system and choose the appropriate library file.
@@ -18,6 +18,6 @@ The official ROS package of Guidance SDK for 32/64 bit Ubuntu and XU3.
 # Documentation
 To reduce the size of this package, we omit all documents. 
 
-- For getting started, please refer to [Developer Guide](https://github.com/dji-sdk/GuidanceSDK/blob/master/doc/DeveloperGuide/DeveloperGuide.md).
-- For detailed API documentation, please refer to [Guidance_SDK_API](https://github.com/dji-sdk/GuidanceSDK/blob/master/doc/Guidance_SDK_API.md).
+- For getting started, please refer to [Developer Guide](https://github.com/dji-sdk/Guidance-SDK/blob/master/doc/Guides/Developer_Guide/en/DeveloperGuide_en.md).
+- For detailed API documentation, please refer to [Guidance_SDK_API](https://github.com/dji-sdk/Guidance-SDK/blob/master/doc/Guidance_SDK_API/Guidance_SDK_API.md).
 
