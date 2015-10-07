@@ -50,17 +50,16 @@ int my_callback(int data_type, int data_len, char *content)
     /* image data */
     if (e_image == data_type && NULL != content)
     {        
-        image_data data;
-        memcpy((char*)&data, content, sizeof(data));
+        image_data* data = (image_data*)content;
 
-        memcpy(g_greyscale_image_left.data, data.m_greyscale_image_left[CAMERA_ID], IMAGE_SIZE);
-        memcpy(g_greyscale_image_right.data, data.m_greyscale_image_right[CAMERA_ID], IMAGE_SIZE);
-        memcpy(g_depth.data, data.m_depth_image[CAMERA_ID], IMAGE_SIZE * 2);
+        memcpy(g_greyscale_image_left.data, data->m_greyscale_image_left[CAMERA_ID], IMAGE_SIZE);
+        memcpy(g_greyscale_image_right.data, data->m_greyscale_image_right[CAMERA_ID], IMAGE_SIZE);
+        memcpy(g_depth.data, data->m_depth_image[CAMERA_ID], IMAGE_SIZE * 2);
 
         Mat depth8(HEIGHT, WIDTH, CV_8UC1);
         g_depth.convertTo(depth8, CV_8UC1);
         imshow("left",  g_greyscale_image_left);
-	imshow("right", g_greyscale_image_right);
+		imshow("right", g_greyscale_image_right);
         imshow("depth", depth8);
         key = waitKey(1);
 
@@ -82,7 +81,7 @@ int my_callback(int data_type, int data_len, char *content)
 
 	// publish right greyscale image
         cv_bridge::CvImage right_8;
-        g_greyscale_image_left.copyTo(right_8.image);
+        g_greyscale_image_right.copyTo(right_8.image);
         right_8.header.frame_id  = "guidance";
         right_8.header.stamp	 = ros::Time::now();
         right_8.encoding  	 = sensor_msgs::image_encodings::MONO8;
@@ -97,17 +96,17 @@ int my_callback(int data_type, int data_len, char *content)
         printf( "imu: [%f %f %f %f %f %f %f]\n", imu_data->acc_x, imu_data->acc_y, imu_data->acc_z, imu_data->q[0], imu_data->q[1], imu_data->q[2], imu_data->q[3] );
  	
     	// publish imu data
-	geometry_msgs::TransformStamped g_imu;
-	g_imu.header.frame_id = "guidance";
-	g_imu.header.stamp    = ros::Time::now();
-	g_imu.transform.translation.x = imu_data->acc_x;
-	g_imu.transform.translation.y = imu_data->acc_y;
-	g_imu.transform.translation.z = imu_data->acc_z;
-	g_imu.transform.rotation.x = imu_data->q[0];
-	g_imu.transform.rotation.y = imu_data->q[1];
-	g_imu.transform.rotation.z = imu_data->q[2];
-	g_imu.transform.rotation.w = imu_data->q[3];
-	imu_pub.publish(g_imu);
+		geometry_msgs::TransformStamped g_imu;
+		g_imu.header.frame_id = "guidance";
+		g_imu.header.stamp    = ros::Time::now();
+		g_imu.transform.translation.x = imu_data->acc_x;
+		g_imu.transform.translation.y = imu_data->acc_y;
+		g_imu.transform.translation.z = imu_data->acc_z;
+		g_imu.transform.rotation.x = imu_data->q[0];
+		g_imu.transform.rotation.y = imu_data->q[1];
+		g_imu.transform.rotation.z = imu_data->q[2];
+		g_imu.transform.rotation.w = imu_data->q[3];
+		imu_pub.publish(g_imu);
     }
     /* velocity */
     if ( e_velocity == data_type && NULL != content )
@@ -116,14 +115,14 @@ int my_callback(int data_type, int data_len, char *content)
         printf( "frame index: %d, stamp: %d\n", vo->frame_index, vo->time_stamp );
         printf( "vx:%f vy:%f vz:%f\n", 0.001f * vo->vx, 0.001f * vo->vy, 0.001f * vo->vz );
 	
-	// publish velocity
-	geometry_msgs::Vector3Stamped g_vo;
-	g_vo.header.frame_id = "guidance";
-	g_vo.header.stamp    = ros::Time::now();
-	g_vo.vector.x = 0.001f * vo->vx;
-	g_vo.vector.y = 0.001f * vo->vy;
-	g_vo.vector.z = 0.001f * vo->vz;
-	velocity_pub.publish(g_vo);
+		// publish velocity
+		geometry_msgs::Vector3Stamped g_vo;
+		g_vo.header.frame_id = "guidance";
+		g_vo.header.stamp    = ros::Time::now();
+		g_vo.vector.x = 0.001f * vo->vx;
+		g_vo.vector.y = 0.001f * vo->vy;
+		g_vo.vector.z = 0.001f * vo->vz;
+		velocity_pub.publish(g_vo);
     }
 
     /* obstacle distance */
@@ -138,17 +137,17 @@ int my_callback(int data_type, int data_len, char *content)
         }
         printf( "\n" );
 
-	// publish obstacle distance
-	sensor_msgs::LaserScan g_oa;
-        g_oa.ranges.resize(5);
-	g_oa.header.frame_id = "guidance";
-	g_oa.header.stamp    = ros::Time::now();
-	g_oa.ranges[0] = 0.01f * oa->distance[0];
-	g_oa.ranges[1] = 0.01f * oa->distance[1];
-	g_oa.ranges[2] = 0.01f * oa->distance[2];
-	g_oa.ranges[3] = 0.01f * oa->distance[3];
-	g_oa.ranges[4] = 0.01f * oa->distance[4];
-	obstacle_distance_pub.publish(g_oa);
+		// publish obstacle distance
+		sensor_msgs::LaserScan g_oa;
+			g_oa.ranges.resize(5);
+		g_oa.header.frame_id = "guidance";
+		g_oa.header.stamp    = ros::Time::now();
+		g_oa.ranges[0] = 0.01f * oa->distance[0];
+		g_oa.ranges[1] = 0.01f * oa->distance[1];
+		g_oa.ranges[2] = 0.01f * oa->distance[2];
+		g_oa.ranges[3] = 0.01f * oa->distance[3];
+		g_oa.ranges[4] = 0.01f * oa->distance[4];
+		obstacle_distance_pub.publish(g_oa);
     }
 
     /* ultrasonic */
@@ -161,23 +160,23 @@ int my_callback(int data_type, int data_len, char *content)
             printf( "ultrasonic distance: %f, reliability: %d\n", ultrasonic->ultrasonic[d] * 0.001f, (int)ultrasonic->reliability[d] );
         }
 	
-	// publish ultrasonic data
-	sensor_msgs::LaserScan g_ul;
-        g_ul.ranges.resize(5);
-        g_ul.intensities.resize(5);
-	g_ul.header.frame_id = "guidance";
-	g_ul.header.stamp    = ros::Time::now();
-	g_ul.ranges[0] = 0.001f * ultrasonic->ultrasonic[0];
-	g_ul.ranges[1] = 0.001f * ultrasonic->ultrasonic[1];
-	g_ul.ranges[2] = 0.001f * ultrasonic->ultrasonic[2];
-	g_ul.ranges[3] = 0.001f * ultrasonic->ultrasonic[3];
-	g_ul.ranges[4] = 0.001f * ultrasonic->ultrasonic[4];
-	g_ul.intensities[0] = 1.0 * ultrasonic->reliability[0];
-	g_ul.intensities[1] = 1.0 * ultrasonic->reliability[1];
-	g_ul.intensities[2] = 1.0 * ultrasonic->reliability[2];
-	g_ul.intensities[3] = 1.0 * ultrasonic->reliability[3];
-	g_ul.intensities[4] = 1.0 * ultrasonic->reliability[4];
-	ultrasonic_pub.publish(g_ul);
+		// publish ultrasonic data
+		sensor_msgs::LaserScan g_ul;
+			g_ul.ranges.resize(5);
+			g_ul.intensities.resize(5);
+		g_ul.header.frame_id = "guidance";
+		g_ul.header.stamp    = ros::Time::now();
+		g_ul.ranges[0] = 0.001f * ultrasonic->ultrasonic[0];
+		g_ul.ranges[1] = 0.001f * ultrasonic->ultrasonic[1];
+		g_ul.ranges[2] = 0.001f * ultrasonic->ultrasonic[2];
+		g_ul.ranges[3] = 0.001f * ultrasonic->ultrasonic[3];
+		g_ul.ranges[4] = 0.001f * ultrasonic->ultrasonic[4];
+		g_ul.intensities[0] = 1.0 * ultrasonic->reliability[0];
+		g_ul.intensities[1] = 1.0 * ultrasonic->reliability[1];
+		g_ul.intensities[2] = 1.0 * ultrasonic->reliability[2];
+		g_ul.intensities[3] = 1.0 * ultrasonic->reliability[3];
+		g_ul.intensities[4] = 1.0 * ultrasonic->reliability[4];
+		ultrasonic_pub.publish(g_ul);
     }
 
     g_lock.leave();
