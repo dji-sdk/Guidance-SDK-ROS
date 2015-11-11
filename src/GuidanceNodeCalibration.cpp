@@ -161,7 +161,7 @@ int my_callback(int data_type, int data_len, char *content)
 			cv_bridge::CvImage left_8;
 			g_greyscale_image_left.copyTo(left_8.image);
 			left_8.header.frame_id  = "guidance";
-			left_8.header.stamp	= ros::Time::now();
+			left_8.header.stamp	= time_in_this_loop;
 			left_8.encoding		= sensor_msgs::image_encodings::MONO8;
 			left_image_pub.publish(left_8.toImageMsg());
 
@@ -179,7 +179,7 @@ int my_callback(int data_type, int data_len, char *content)
 			cv_bridge::CvImage right_8;
 			g_greyscale_image_right.copyTo(right_8.image);
 			right_8.header.frame_id  = "guidance";
-			right_8.header.stamp	 = ros::Time::now();
+			right_8.header.stamp	 = time_in_this_loop;
 			right_8.encoding  	 = sensor_msgs::image_encodings::MONO8;
 			right_image_pub.publish(right_8.toImageMsg());
 
@@ -315,8 +315,8 @@ int main(int argc, char** argv)
 	my_node.getParam("/left_param_file", camera_params_left);
     my_node.getParam("/right_param_file", camera_params_right);
     depth_image_pub			= my_node.advertise<sensor_msgs::Image>("/guidance/depth_image",1);
-    left_image_pub			= my_node.advertise<sensor_msgs::Image>("/guidance/left_image",1);
-    right_image_pub			= my_node.advertise<sensor_msgs::Image>("/guidance/right_image",1);
+    left_image_pub			= my_node.advertise<sensor_msgs::Image>("/guidance/left/image_raw",1);
+    right_image_pub			= my_node.advertise<sensor_msgs::Image>("/guidance/right/image_raw",1);
     imu_pub  				= my_node.advertise<geometry_msgs::TransformStamped>("/guidance/imu",1);
     velocity_pub  			= my_node.advertise<geometry_msgs::Vector3Stamped>("/guidance/velocity",1);
     obstacle_distance_pub	= my_node.advertise<sensor_msgs::LaserScan>("/guidance/obstacle_distance",1);
