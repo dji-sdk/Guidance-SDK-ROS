@@ -1,6 +1,6 @@
 image_width: 320		
 image_height: 240
-camera_name: guidance/left
+camera_name: guidance/right
 camera_matrix:
   rows: 3
   cols: 3
