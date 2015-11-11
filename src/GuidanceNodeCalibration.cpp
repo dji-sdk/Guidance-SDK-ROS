@@ -105,14 +105,12 @@ struct SimpleMatrix
 
 void transfer_SimpleMatrix_from_YML_to_ROSmsg(const YAML::Node& node, SimpleMatrix& m)
 {
-    std::cout << "transfer_SimpleMatrix_from_YML_to_ROSmsg()" << std::endl;
     int rows, cols;
     rows = node["rows"].as<int>();
     cols = node["cols"].as<int>();
     const YAML::Node& data = node["data"];
     for (int i = 0; i < rows*cols; ++i)
     {
-        std::cout << i << std::endl;
         m.data[i] = data[i].as<double>();
     }
 }
@@ -133,7 +131,6 @@ void read_params_from_yaml_and_fill_cam_info_msg(std::string& file_name, sensor_
     transfer_SimpleMatrix_from_YML_to_ROSmsg(doc[P_YML_NAME], P_);
 
     cam_info.distortion_model = doc[DMODEL_YML_NAME].as<std::string>();
-    std::cout << "distortion_model" << std::endl;
 
     const YAML::Node& D_node = doc[D_YML_NAME];
     int D_rows, D_cols;
@@ -141,10 +138,8 @@ void read_params_from_yaml_and_fill_cam_info_msg(std::string& file_name, sensor_
     D_cols = D_node["cols"].as<int>();
     const YAML::Node& D_data = D_node["data"];
     cam_info.D.resize(D_rows*D_cols); 
-    std::cout << "before loop" << std::endl;
     for (int i = 0; i < D_rows*D_cols; ++i)
     {
-        std::cout << "inside loop" << std::endl;
         cam_info.D[i] = D_data[i].as<float>();  
     }
 }
@@ -175,9 +170,7 @@ int my_callback(int data_type, int data_len, char *content)
             g_cam_info_left.header.frame_id = "guidance";
 
             read_params_from_yaml_and_fill_cam_info_msg(camera_params_left, g_cam_info_left);
-            std::cout << "read left params" << std::endl;
             cam_info_left_pub.publish(g_cam_info_left);
-            std::cout << "published left " << std::endl;
 		}
 		if ( data->m_greyscale_image_right[CAMERA_ID] ){
 			memcpy(g_greyscale_image_right.data, data->m_greyscale_image_right[CAMERA_ID], IMAGE_SIZE);
@@ -195,7 +188,6 @@ int my_callback(int data_type, int data_len, char *content)
             g_cam_info_right.header.frame_id = "guidance";
 
             read_params_from_yaml_and_fill_cam_info_msg(camera_params_right, g_cam_info_right);
-            std::cout << "read right params" << std::endl;
             cam_info_right_pub.publish(g_cam_info_right);
 		}
 		if ( data->m_depth_image[CAMERA_ID] ){
