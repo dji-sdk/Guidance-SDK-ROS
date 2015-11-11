@@ -24,7 +24,6 @@
 #include <sensor_msgs/CameraInfo.h> // camera info message. Contains cam params
 #include "yaml-cpp/yaml.h" // use to parse YAML calibration file
 #include <fstream> // required to parse YAML 
-#include <ros/package.h> // use to resolve current package path
 
 ros::Publisher depth_image_pub;
 ros::Publisher left_image_pub;
@@ -80,9 +79,8 @@ std::ostream& operator<<(std::ostream& out, const e_sdk_err_code value){
 // Hackish code to read cam params from YAML 
 // adapted from cam_info_manager and camera_calibration_parser https://github.com/ros-perception/image_common/blob/hydro-devel/camera_calibration_parsers/src/parse_yml.cpp
 
-std::string package_directory =  ros::package::getPath("GuidanceRos");  
-std::string camera_params_right = package_directory + "/calibration_files/camera_params_right.yaml";
-std::string camera_params_left = package_directory + "/calibration_files/camera_params_left.yaml";
+std::string camera_params_left;
+std::string camera_params_right;
 
 static const char CAM_YML_NAME[]    = "camera_name";
 static const char WIDTH_YML_NAME[]  = "image_width";
@@ -322,6 +320,8 @@ int main(int argc, char** argv)
     /* initialize ros */
     ros::init(argc, argv, "GuidanceNode");
     ros::NodeHandle my_node;
+	my_node.getParam("/left_param_file", camera_params_left);
+    my_node.getParam("/right_param_file", camera_params_right);
     depth_image_pub			= my_node.advertise<sensor_msgs::Image>("/guidance/depth_image",1);
     left_image_pub			= my_node.advertise<sensor_msgs::Image>("/guidance/left_image",1);
     right_image_pub			= my_node.advertise<sensor_msgs::Image>("/guidance/right_image",1);
@@ -329,6 +329,8 @@ int main(int argc, char** argv)
     velocity_pub  			= my_node.advertise<geometry_msgs::Vector3Stamped>("/guidance/velocity",1);
     obstacle_distance_pub	= my_node.advertise<sensor_msgs::LaserScan>("/guidance/obstacle_distance",1);
     ultrasonic_pub			= my_node.advertise<sensor_msgs::LaserScan>("/guidance/ultrasonic",1);
+    cam_info_right_pub      = my_node.advertise<sensor_msgs::CameraInfo>("/guidance/right/camera_info",1);
+    cam_info_left_pub       = my_node.advertise<sensor_msgs::CameraInfo>("/guidance/left/camera_info",1);
 
     /* initialize guidance */
     reset_config();

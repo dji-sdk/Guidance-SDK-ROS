@@ -1,0 +1,8 @@
+<launch>
+    <!-- <node pkg="GuidanceRos" type="GuidanceNode" name="GuidanceNode"/> -->
+    <!-- <node pkg="GuidanceRos" type="GuidanceNodeCalibration" name="GuidanceNodeCalibration"> -->
+		<param name="left_param_file" value="$(find GuidanceRos)/calibration_files/camera_params_left.yaml" />
+		<param name="right_param_file" value="$(find GuidanceRos)/calibration_files/camera_params_right.yaml" />
+    <!-- </node> -->
+</launch>
+<!-- TODO nodes, if launched, don't run somehow.  -->
