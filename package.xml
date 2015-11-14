@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package>
-  <name>GuidanceRos</name>
+  <name>guidance</name>
   <version>0.0.1</version>
   <description>The Guidance Ros package</description>
 
