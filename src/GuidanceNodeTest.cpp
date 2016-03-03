@@ -26,6 +26,7 @@ ros::Subscriber imu_sub;
 ros::Subscriber velocity_sub;
 ros::Subscriber obstacle_distance_sub;
 ros::Subscriber ultrasonic_sub;
+ros::Subscriber position_sub;
 
 using namespace cv;
 #define WIDTH 320
@@ -111,6 +112,14 @@ void ultrasonic_callback(const sensor_msgs::LaserScan& g_ul)
         printf( "ultrasonic distance: [%f]  reliability: [%d]\n", g_ul.ranges[i], (int)g_ul.intensities[i] );
 }
 
+/* motion */
+void position_callback(const geometry_msgs::Vector3Stamped& g_pos)
+{
+	printf("frame_id: %s stamp: %d\n", g_pos.header.frame_id.c_str(), g_pos.header.stamp.sec);
+	for (int i = 0; i < 5; i++)
+		printf("global position: [%f %f %f]\n", g_pos.vector.x, g_pos.vector.y, g_pos.vector.z);
+}
+
 int main(int argc, char** argv)
 {
     ros::init(argc, argv, "GuidanceNodeTest");
@@ -122,7 +131,8 @@ int main(int argc, char** argv)
     imu_sub               = my_node.subscribe("/guidance/imu", 1, imu_callback);
     velocity_sub          = my_node.subscribe("/guidance/velocity", 1, velocity_callback);
     obstacle_distance_sub = my_node.subscribe("/guidance/obstacle_distance", 1, obstacle_distance_callback);
-    ultrasonic_sub        = my_node.subscribe("/guidance/ultrasonic", 1, ultrasonic_callback);
+	ultrasonic_sub = my_node.subscribe("/guidance/ultrasonic", 1, ultrasonic_callback);
+	position_sub = my_node.subscribe("/guidance/position", 1, position_callback);
 
     while (ros::ok())
         ros::spinOnce();
