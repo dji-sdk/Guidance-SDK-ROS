@@ -282,6 +282,7 @@ int main(int argc, char** argv)
     select_ultrasonic();
     select_obstacle_distance();
     select_velocity();
+    select_motion();
     /* start data transfer */
 	get_image_size(&WIDTH, &HEIGHT);
 	std::cout<<"(width, height)="<<WIDTH<<", "<<HEIGHT<<std::endl;

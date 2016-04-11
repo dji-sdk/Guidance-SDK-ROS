@@ -271,7 +271,7 @@ SDK_API void select_ultrasonic( void );
 SDK_API void select_velocity( void );
 
 /**  
-*     @fn int select_motion();
+*     @fn void select_motion();
 *     @brief  subscribe to motion data, i.e. velocity of GUIDANCE in body coordinate system.
 *     @return   error code,if error occur,it will be non zero
 */
