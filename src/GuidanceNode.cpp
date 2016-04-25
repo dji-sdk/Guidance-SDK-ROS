@@ -246,7 +246,7 @@ int main(int argc, char** argv)
     velocity_pub  			= my_node.advertise<geometry_msgs::Vector3Stamped>("/guidance/velocity",1);
     obstacle_distance_pub	= my_node.advertise<sensor_msgs::LaserScan>("/guidance/obstacle_distance",1);
 	ultrasonic_pub			= my_node.advertise<sensor_msgs::LaserScan>("/guidance/ultrasonic", 1);
-	position_pub			= my_node.advertise<sensor_msgs::LaserScan>("/guidance/position", 1);
+	position_pub			= my_node.advertise<geometry_msgs::Vector3Stamped>("/guidance/position", 1);
 
     /* initialize guidance */
     reset_config();
