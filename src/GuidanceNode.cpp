@@ -29,12 +29,11 @@ ros::Publisher imu_pub;
 ros::Publisher obstacle_distance_pub;
 ros::Publisher velocity_pub;
 ros::Publisher ultrasonic_pub;
-ros::Publisher position_pub;
 
 using namespace cv;
 
-int WIDTH=320;
-int HEIGHT=240;
+#define WIDTH 320
+#define HEIGHT 240
 #define IMAGE_SIZE (HEIGHT * WIDTH)
 
 char        	key       = 0;
@@ -133,7 +132,7 @@ int my_callback(int data_type, int data_len, char *content)
 		g_imu.transform.translation.y = imu_data->acc_y;
 		g_imu.transform.translation.z = imu_data->acc_z;
 		g_imu.transform.rotation.w = imu_data->q[0];
-		g_imu.transform.rotation.x = imu_data->q[1];
+		g_imu.transform.rotation.z = imu_data->q[1];
 		g_imu.transform.rotation.y = imu_data->q[2];
 		g_imu.transform.rotation.z = imu_data->q[3];
 		imu_pub.publish(g_imu);
@@ -199,22 +198,7 @@ int my_callback(int data_type, int data_len, char *content)
 		}
 		ultrasonic_pub.publish(g_ul);
     }
-	
-	if(e_motion == data_type && NULL!=content){
-		motion* m=(motion*)content;
-		printf("frame index: %d, stamp: %d\n", m->frame_index, m->time_stamp);
-		printf("(px,py,pz)=(%.2f,%.2f,%.2f)\n", m->position_in_global_x, m->position_in_global_y, m->position_in_global_z);
 
-		// publish position
-		geometry_msgs::Vector3Stamped g_pos;
-		g_pos.header.frame_id = "guidance";
-		g_pos.header.stamp = ros::Time::now();
-		g_pos.vector.x = m->position_in_global_x;
-		g_pos.vector.y = m->position_in_global_y;
-		g_pos.vector.z = m->position_in_global_z;
-		position_pub.publish(g_pos);
-	}
-	
     g_lock.leave();
     g_event.set_event();
 
@@ -245,8 +229,7 @@ int main(int argc, char** argv)
     imu_pub  				= my_node.advertise<geometry_msgs::TransformStamped>("/guidance/imu",1);
     velocity_pub  			= my_node.advertise<geometry_msgs::Vector3Stamped>("/guidance/velocity",1);
     obstacle_distance_pub	= my_node.advertise<sensor_msgs::LaserScan>("/guidance/obstacle_distance",1);
-	ultrasonic_pub			= my_node.advertise<sensor_msgs::LaserScan>("/guidance/ultrasonic", 1);
-	position_pub			= my_node.advertise<geometry_msgs::Vector3Stamped>("/guidance/position", 1);
+    ultrasonic_pub			= my_node.advertise<sensor_msgs::LaserScan>("/guidance/ultrasonic",1);
 
     /* initialize guidance */
     reset_config();
@@ -282,10 +265,7 @@ int main(int argc, char** argv)
     select_ultrasonic();
     select_obstacle_distance();
     select_velocity();
-    select_motion();
     /* start data transfer */
-	get_image_size(&WIDTH, &HEIGHT);
-	std::cout<<"(width, height)="<<WIDTH<<", "<<HEIGHT<<std::endl;
     err_code = set_sdk_event_handler(my_callback);
     RETURN_IF_ERR(err_code);
     err_code = start_transfer();
@@ -303,15 +283,17 @@ int main(int argc, char** argv)
 	while (ros::ok())
 	{
 		g_event.wait_event();
-		if (key > 0)
+		if (key > 0){
 			// set exposure parameters
 			if(key=='j' || key=='k' || key=='m' || key=='n'){
-				if(key=='j')
+				if(key=='j'){
 					if(para.m_is_auto_exposure) para.m_expected_brightness += 20;
 					else para.m_exposure_time += 3;
-				else if(key=='k')
+				}
+				else if(key=='k'){
 					if(para.m_is_auto_exposure) para.m_expected_brightness -= 20;
 					else para.m_exposure_time -= 3;
+				}
 				else if(key=='m'){
 					para.m_is_auto_exposure = !para.m_is_auto_exposure;
                     std::cout<<"exposure is "<<para.m_is_auto_exposure<<std::endl;
@@ -325,7 +307,7 @@ int main(int argc, char** argv)
 				set_exposure_param(&para);
 				key = 0;
 			}
-			else {// switch image direction
+			else if (key == 'q' || key == 'w' || key == 'd' || key == 'x' || key == 'a' || key == 's'){// switch image direction
 				err_code = stop_transfer();
 				RETURN_IF_ERR(err_code);
 				reset_config();
@@ -341,11 +323,17 @@ int main(int argc, char** argv)
 				select_greyscale_image(CAMERA_ID, false);
 				select_depth_image(CAMERA_ID);
 
+                select_imu();
+                select_ultrasonic();
+                select_obstacle_distance();
+                select_velocity();
+
 				err_code = start_transfer();
 				RETURN_IF_ERR(err_code);
 				key = 0;
 			}
 			ros::spinOnce();
+		}
 	}
 
 	/* release data transfer */
