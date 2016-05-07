@@ -12,8 +12,7 @@
 #include <sensor_msgs/Image.h>
 #include <sensor_msgs/image_encodings.h>
 
-#include <opencv/cv.h>
-#include <opencv/highgui.h>
+#include <opencv2/opencv.hpp>
 
 #include "DJI_guidance.h"
 #include "DJI_utility.h"
@@ -347,3 +346,5 @@ int main(int argc, char** argv)
 
     return 0;
 }
+
+/* vim: set et fenc=utf-8 ff=unix sts=0 sw=4 ts=4 : */
