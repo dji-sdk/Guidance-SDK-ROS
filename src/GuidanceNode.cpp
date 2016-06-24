@@ -141,7 +141,7 @@ int my_callback(int data_type, int data_len, char *content)
 		g_imu.transform.translation.y = imu_data->acc_y;
 		g_imu.transform.translation.z = imu_data->acc_z;
 		g_imu.transform.rotation.w = imu_data->q[0];
-		g_imu.transform.rotation.z = imu_data->q[1];
+		g_imu.transform.rotation.x = imu_data->q[1];
 		g_imu.transform.rotation.y = imu_data->q[2];
 		g_imu.transform.rotation.z = imu_data->q[3];
 		imu_pub.publish(g_imu);
