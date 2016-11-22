@@ -49,6 +49,10 @@ add_executable(guidanceNode
   src/GuidanceNode.cpp
   src/DJI_utility.cpp)
 
+add_executable(allCameras
+  src/FullCameras.cpp
+  src/DJI_utility.cpp)
+
 add_executable(guidanceNodeTest
   src/GuidanceNodeTest.cpp)
 
