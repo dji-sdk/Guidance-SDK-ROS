@@ -21,14 +21,18 @@
 #include <geometry_msgs/Vector3Stamped.h> //velocity
 #include <sensor_msgs/LaserScan.h> //obstacle distance & ultrasonic
 
- ros::Publisher image_pubs[10];
- cv_bridge::CvImage images[10];
 
  using namespace cv;
 
 #define WIDTH 320
 #define HEIGHT 240
 #define IMAGE_SIZE (HEIGHT * WIDTH)
+
+
+ ros::Publisher image_pubs[10];
+ cv_bridge::CvImage images[10];
+ Mat greyscales[10] {Mat(HEIGHT, WIDTH, CV_8UC1),Mat(HEIGHT, WIDTH, CV_8UC1),Mat(HEIGHT, WIDTH, CV_8UC1),Mat(HEIGHT, WIDTH, CV_8UC1),Mat(HEIGHT, WIDTH, CV_8UC1),
+                    Mat(HEIGHT, WIDTH, CV_8UC1),Mat(HEIGHT, WIDTH, CV_8UC1),Mat(HEIGHT, WIDTH, CV_8UC1),Mat(HEIGHT, WIDTH, CV_8UC1),Mat(HEIGHT, WIDTH, CV_8UC1)};
 
  char       key         = 0;
  bool       show_images = 0;
@@ -67,18 +71,20 @@ int my_callback(int data_type, int data_len, char *content)
   if (e_image == data_type && NULL != content)
   {        
     image_data* data = (image_data*)content;
-
+    printf("hey");
     for (int i = 0; i < 5; ++i)
     {
       int j = 2*i;
       if(data->m_greyscale_image_left[i]){
-        images[j].image = data->m_greyscale_image_left[i];
+        memcpy(greyscales[j].data, data->m_greyscale_image_left[i], IMAGE_SIZE);
+		greyscales[j].copyTo(images[j].image);
         images[j].header.stamp  = ros::Time::now();
         images[j].encoding    = sensor_msgs::image_encodings::MONO8;
         image_pubs[j].publish(images[j].toImageMsg());
       }
       if(data->m_greyscale_image_right[i]){
-        images[j+1].image = data->m_greyscale_image_right[i];
+        memcpy(greyscales[j+1].data, data->m_greyscale_image_right[i], IMAGE_SIZE);
+		greyscales[j+1].copyTo(images[j+1].image);
         images[j+1].header.stamp = ros::Time::now();
         images[j+1].encoding = sensor_msgs::image_encodings::MONO8;
         image_pubs[j+1].publish(images[j+1].toImageMsg());
@@ -193,6 +199,9 @@ int main(int argc, char** argv)
     ros::spinOnce();
     if (key > 0){
      if (key == 'q'){
+        err_code = stop_transfer();
+		RETURN_IF_ERR(err_code);
+		reset_config();
       break;
     }
   }
