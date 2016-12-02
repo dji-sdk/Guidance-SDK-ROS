@@ -350,9 +350,9 @@ int main(int argc, char** argv)
 				err_code = start_transfer();
 				RETURN_IF_ERR(err_code);
 				key = 0;
-			}
-			ros::spinOnce();
+            }
 		}
+        ros::spinOnce();
 	}
 
 	/* release data transfer */
