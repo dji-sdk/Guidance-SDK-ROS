@@ -8,7 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   geometry_msgs
 )
-find_package(OpenCV 2 REQUIRED core highgui)
+find_package(OpenCV REQUIRED core highgui)
 
 catkin_package(
 )
